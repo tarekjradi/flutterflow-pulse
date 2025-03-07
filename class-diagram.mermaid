@@ -1,0 +1,80 @@
+classDiagram
+    %% Core Client Classes
+    class ClientProvider {
+        -Client? _client
+        -Map<String, Subscription> _subscriptions
+        -Map<String, StreamSubscription<Message>> _streamSubscriptions
+        +getSubscription(String channel): Subscription?
+        +hasSubscription(String channel): bool
+        +subscribe(String channel, Function messageHandler): Future<Subscription>
+        +unsubscribe(String channel): Future<bool>
+        +unsubscribeAll(): Future<void>
+        +initialize(authToken, servers, timeout, retryCount, retryInterval): Future<void>
+        +dispose(): Future<void>
+    }
+
+    %% Context Management
+    class ContextProvider {
+        -BuildContext? _currentContext
+        -String? _currentPageName
+        +setContext(BuildContext context, String? pageName): void
+        +get context(): BuildContext?
+        +get currentPageName(): String?
+        +get hasValidContext(): bool
+        +showMessage(String message, bool isError): void
+        +navigateTo(String routeName, Map<String, dynamic>? queryParameters): void
+    }
+
+    %% Message Handling
+    class MessageHandlerInterface {
+        <<interface>>
+        +handle(BuildContext context, Map<String, dynamic> messageData): void
+    }
+
+    class MessageHandler {
+        -Map<String, MessageHandlerInterface> _handlers
+        +registerHandler(String type, MessageHandlerInterface handler): void
+        +processMessage(Map<String, dynamic> messageData): void
+    }
+
+    %% Subscription Service
+    class SubscriptionService {
+        -MessageHandler _messageHandler
+        +registerHandler(String functionType, MessageHandlerInterface handler): void
+        +subscribeToChannel(String channel, authValidator): Future<Map<String, dynamic>>
+        +unsubscribeFromChannel(String channel): Future<bool>
+        +unsubscribeFromAllChannels(): Future<void>
+    }
+
+    %% Helper Functions
+    class GlobalFunctions {
+        +setCurrentContext(BuildContext context, String? pageName): void
+        +getCurrentContext(): BuildContext?
+        +initializeContextProvider(): Future<void>
+        +subscribeChannel(String channel): Future<dynamic>
+    }
+
+    %% External Dependencies
+    class Client {
+        +sub(String subject): Subscription
+        +connect(Uri, timeout, connectOption, retry, retryCount, retryInterval): Future
+        +close(): Future
+        +connected: bool
+    }
+
+    class Subscription {
+        +stream: Stream<Message>
+    }
+
+    %% Relationships
+    ClientProvider --> Client: uses
+    ClientProvider --> Subscription: manages
+    ClientProvider <-- SubscriptionService: uses
+    MessageHandler <-- SubscriptionService: contains
+    %% Concrete implementations would implement this interface
+    MessageHandlerInterface <.. MessageHandler: references
+    ContextProvider <-- MessageHandler: uses
+    ContextProvider <-- GlobalFunctions: uses
+    GlobalFunctions --> SubscriptionService: calls
+    GlobalFunctions --> ContextProvider: calls
+    Client --> Subscription: creates
