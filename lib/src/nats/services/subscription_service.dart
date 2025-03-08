@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import '../client/client-provider.dart';
-import '../handlers/message-handler.dart';
-import '../handlers/interfaces/message-handler-interface.dart';
+import '../client/client_provider.dart';
+import '../handlers/message_handler.dart';
+import '../handlers/interfaces/message_handler_interface.dart';
 
 /// SubscriptionService handles subscribing to channels
 /// and delegates message processing.

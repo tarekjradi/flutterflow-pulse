@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import '../context/context-provider.dart';
-import '../handlers/interfaces/message-handler-interface.dart';
+import '../context/context_provider.dart';
+import '../handlers/interfaces/message_handler_interface.dart';
 
 /// MessageHandler is responsible for processing incoming messages
 /// and delegating to the appropriate specialized handlers.

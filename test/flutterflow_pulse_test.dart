@@ -65,10 +65,9 @@ void main() {
       final testChannel = 'test_channel';
 
       // Mock message handler
-      final mockHandler = (Map<String, dynamic> message) {
+      void mockHandler(Map<String, dynamic> message) {
         // Simulate message processing
-        print('Mock handler received: $message');
-      };
+      }
 
       expect(() async {
         final subscription =
@@ -83,7 +82,7 @@ void main() {
         () async {
       final testChannel = 'duplicate_channel';
 
-      final mockHandler = (Map<String, dynamic> message) {};
+      mockHandler(Map<String, dynamic> message) {}
 
       final firstSubscription =
           await natsClient.subscribe(testChannel, mockHandler);
